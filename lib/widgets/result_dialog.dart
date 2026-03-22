@@ -4,9 +4,9 @@ class ResultDialog extends StatelessWidget {
   final String message;
 
   const ResultDialog({
-    Key? key,
+    super.key,
     required this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

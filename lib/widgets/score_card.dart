@@ -7,12 +7,12 @@ class ScoreCard extends StatelessWidget {
   final bool isActive;
 
   const ScoreCard({
-    Key? key,
+    super.key,
     required this.label,
     required this.score,
     required this.color,
     required this.isActive,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

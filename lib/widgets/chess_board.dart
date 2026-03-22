@@ -9,13 +9,13 @@ class ChessBoard extends StatelessWidget {
   final double cellSize;
 
   const ChessBoard({
-    Key? key,
+    super.key,
     required this.board,
     required this.selectedPiece,
     required this.onCellTap,
     required this.isValidMove,
     required this.cellSize,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

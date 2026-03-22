@@ -8,11 +8,12 @@ import '../utils/game_logic.dart';
 import '../widgets/chess_board.dart';
 import '../widgets/score_card.dart';
 import '../widgets/result_dialog.dart';
+import '../services/player_stats_service.dart';
 
 class GameScreen extends StatefulWidget {
   final int difficulty;
   
-  const GameScreen({Key? key, required this.difficulty}) : super(key: key);
+  const GameScreen({super.key, required this.difficulty});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -237,7 +238,7 @@ class _GameScreenState extends State<GameScreen> {
           setState(() {
             coins += robotCaptureCount * 10;
           });
-          _showCoinNotification('+${robotCaptureCount * 10} 💰 (Robot ${robotCaptureCount} ta)', Colors.green);
+          _showCoinNotification('+${robotCaptureCount * 10} 💰 (Robot $robotCaptureCount ta)', Colors.red);
         } else if (robotCaptureCount == 1) {
           // Qora 1 dona yeb oldi - 10 tanga kamaytirish
           setState(() {
@@ -258,14 +259,14 @@ class _GameScreenState extends State<GameScreen> {
           setState(() {
             coins += playerCaptureCount * 10;
           });
-          _showCoinNotification('+${playerCaptureCount * 10} 💰 (Siz ${playerCaptureCount} ta)', Colors.green);
+          _showCoinNotification('+${playerCaptureCount * 10} 💰 (Siz $playerCaptureCount ta)', Colors.green);
         } else if (playerCaptureCount == 1) {
           // Oq 1 dona yeb oldi - 10 tanga kamaytirish
           setState(() {
-            coins -= 10;
+            coins += 10;
             if (coins < 0) coins = 0;
           });
-          _showCoinNotification('-10 💰 (Siz 1 ta)', Colors.red);
+          _showCoinNotification('+10 💰 (Siz 1 ta ball)', Colors.green);
         }
         playerCaptureCount = 0; // Reset
       });
@@ -647,7 +648,7 @@ class _GameScreenState extends State<GameScreen> {
     return count;
   }
 
-  void endGame(String winnerColor) {
+  void endGame(String winnerColor) async {
     setState(() {
       gameOver = true;
       winner = winnerColor;
@@ -665,6 +666,13 @@ class _GameScreenState extends State<GameScreen> {
     });
     
     gameTimer?.cancel();
+    
+    // Statistikani saqlash
+    await PlayerStatsService.addGamePlayed();
+    if (winnerColor == 'white') {
+      await PlayerStatsService.addWin();
+      await PlayerStatsService.addCoins(coins);
+    }
     
     if (playerWins + robotWins >= 5) {
       Future.delayed(const Duration(seconds: 2), () {
